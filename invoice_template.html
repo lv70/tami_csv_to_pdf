@@ -3,20 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <title>Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet">
+  <style>
+    .elegant-heading {
+      font-family: 'Cinzel', Georgia, serif;
+      text-transform: uppercase;
+    }
+  </style>
 </head>
 <body style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #333333; background-color: #ffffff; margin: 0; padding: 0;">
   
   <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff;">
     <tr>
       <td align="center">
-        <table width="650" border="0" cellspacing="0" cellpadding="20" style="width: 650px; margin: 20px auto; border: 1px solid #dddddd;">
+        <table width="650" border="0" cellspacing="0" cellpadding="20" style="width: 650px; margin: 20px auto;">
           
           <!-- IMAGE HEADER (CENTERED TOP) -->
-          <tr>
-            <td colspan="2" style="padding-top: 30px; padding-bottom: 10px; text-align: center;">
-              <img src="https://drive.google.com/uc?export=download&id=1C3AzYTi12ufLQ0gQZ6zSWX66opJNPApk" alt="Company Logo" style="max-width: 200px; height: auto; display: block; margin-left: auto; margin-right: auto;">
-            </td>
-          </tr>
+<tr>
+  <td colspan="2" style="padding-top: 30px; padding-bottom: 10px; text-align: center;">
+    <img src="{{IMAGE_SRC}}" alt="Company LogoX"
+         style="max-width: 200px; height: auto; display: block; margin-left: auto; margin-right: auto;">
+  </td>
+</tr>
 
           <!-- HEADER SECTION -->
           <tr>
@@ -25,16 +35,20 @@
                 <tr>
                   <!-- Company Info -->
                   <td width="50%" valign="top" style="font-size: 13px; line-height: 1.5;">
-                    <strong style="font-size: 18px; color: #000000; margin-bottom: 8px; display: block;">Your Company Name</strong>
-                    Company Address Line 1<br>
-                    City, Postal Code<br>
-                    VAT: GB123456789
-                  </td>
+                    <strong class="elegant-heading" style="font-size: 18px; color: #000000; margin-bottom: 8px; display: block;">VCH STYLE LTD</strong>
+                    Registered address:<br>
+                    2-4 Gladstone Place<br>
+                    Newton Abbot<br>
+                    TQ12 2AW<br>
+                    Company Number:<br>
+                    15883624<br>
+                    </td>
                   <!-- Invoice Info -->
                   <td width="50%" valign="top" align="right" style="font-size: 13px; line-height: 1.5;">
-                    <strong style="font-size: 18px; color: #000000; margin-bottom: 8px; display: block;">Brand: {{BRAND}}</strong>
-                    <b>Invoice Date:</b> {{CURRENT_DATE}}<br>
-                    <b>Reference:</b> {{INVOICE_NUMBERS}}
+                    <strong class="elegant-heading" style="font-size: 18px; color: #000000; margin-bottom: 8px; display: block;">Brand: {{BRAND}}</strong>
+                    <b>Invoice Date:</b> {{INVOICE_DATE}}<br>
+                    <b>Reference:</b> {{INVOICE_NUMBERS}}<br>
+                    <b>VAT Number:</b> 380400235
                   </td>
                 </tr>
               </table>
@@ -46,12 +60,12 @@
             <td style="padding: 20px;">
               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td width="50%" valign="top">
-                    <strong style="display: block; margin-bottom: 5px; color: #888888; font-size: 12px; text-transform: uppercase;">Bill To</strong>
-                    <span style="font-size: 14px; line-height: 1.5;">
+                  <td width="50%" valign="top" style="font-size: 13px; line-height: 1.5; color: #333333;">
+<strong style="display: block; margin-bottom: 5px; color: #888888; font-size: 12px; text-transform: uppercase;">Self-billing invoice to:</strong>
+                    <span style="font-size: 13px; line-height: 1.5; color: #333333;">
+                    <span style="font-size: 13px; line-height: 1.5; color: #333333;">
                       {{CLIENT_NAME}}<br>
-                      Client Address<br>
-                      City, Postal Code
+                      {{CLIENT_ADDRESS}}<br>
                     </span>
                   </td>
                 </tr>
