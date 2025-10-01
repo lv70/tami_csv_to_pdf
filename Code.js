@@ -227,7 +227,7 @@ function generateBrandReports() {
     const required = [
       '*contactname', 'contactname',
       '*invoicenumber', 'invoicenumber',
-      '*invoiceDate',
+      '*invoicedate', 'invoicedate',
       'description',
       '*quantity', 'quantity',
       '*unitamount', 'unitamount',
@@ -235,17 +235,20 @@ function generateBrandReports() {
       'gross'
     ];
 
-    const hasRequired = required.some(r => headerSet.has(r));
-    // A looser check: ensure at least one of contact name, invoice number, description, and gross exist
+    // A looser check: ensure required fields exist
     const basicOk = (headerSet.has('*contactname') || headerSet.has('contactname'))
       && (headerSet.has('*invoicenumber') || headerSet.has('invoicenumber'))
+      && (headerSet.has('*invoicedate') || headerSet.has('invoicedate'))
       && headerSet.has('description')
-      && headerSet.has('*invoiceDate')
       && (headerSet.has('*quantity') || headerSet.has('quantity'))
       && (headerSet.has('*unitamount') || headerSet.has('unitamount'))
       && headerSet.has('taxamount');
 
     if (!basicOk) {
+      // Debug logging for missing header detection
+      Logger.log('HeaderSet found: ' + JSON.stringify([...headerSet]));
+      Logger.log('Required headers: ' + JSON.stringify(required));
+      Logger.log('Missing headers: ' + JSON.stringify(required.filter(r => !headerSet.has(r))));
       updateProgressStatus(ss, 'Headers on sheet not as expected');
       return;
     }
@@ -265,7 +268,7 @@ function generateBrandReports() {
     rows.forEach(row => {
       const brand = row['*ContactName'] || row[headers[0]] || 'Unknown Brand';
       const invoiceNum = row['*InvoiceNumber'] || row['InvoiceNumber'] || 'Unknown Invoice';
-      const InvoiceDate = row ['*invoiceDate'];
+      const invoiceDate = row ['*InvoiceDate'];
       
       Logger.log('Processing row with brand: ' + brand + ', invoice: ' + invoiceNum);
       if (!brands[brand]) {
@@ -345,6 +348,15 @@ function generateBrandReports() {
       const currentDate = Utilities.formatDate(new Date(), 'GMT', 'dd/MM/yyyy');
       const allInvoiceNumbers = Object.keys(brandData);
       
+      // Define invoiceDate from first invoice row for this brand
+      const invoiceNumbersArr = Object.keys(brandData);
+      const invoiceDate = brandData[invoiceNumbersArr[0]][0]['*InvoiceDate']
+        ? Utilities.formatDate(new Date(brandData[invoiceNumbersArr[0]][0]['*InvoiceDate']), Session.getScriptTimeZone(), 'd MMM yyyy')
+        : Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'd MMM yyyy');
+      
+      // Extract client address from first row of first invoice
+      const clientAddress = brandData[invoiceNumbersArr[0]][0]['Address'] || '';
+
       // Define styles for consistency
       const thStyle = "background-color: #f7f7f7; color: #333333; padding: 12px; border-bottom: 2px solid #dddddd; text-align: left; font-size: 12px; font-weight: bold; text-transform: uppercase;";
       const tdStyle = "padding: 12px; border-bottom: 1px solid #eeeeee;";
@@ -456,6 +468,7 @@ function generateBrandReports() {
         .replace(/\{\{CLIENT_NAME\}\}/g, clientName)
         .replace(/\{\{INVOICE_DATE\}\}/g, invoiceDate)
         .replace(/\{\{INVOICE_NUMBERS\}\}/g, allInvoiceNumbers.join(', '))
+        .replace(/\{\{CLIENT_ADDRESS\}\}/g, clientAddress)
         .replace(/\{\{INVOICES_HTML\}\}/g, invoicesHtml);
     
       // Convert HTML to PDF
