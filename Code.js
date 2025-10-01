@@ -176,7 +176,15 @@ function generateBrandReports() {
     } catch (loadErr) {
       throw loadErr;
     }
-    // Get the CSV file - handle CSV files, Excel files, and Google Sheets
+    
+    // Embed company logo as data URL
+    const logoFileId = '1C3AzYTi12ufLQ0gQZ6zSWX66opJNPApk';
+    const logoBlob = DriveApp.getFileById(logoFileId).getBlob();
+    const logoBase64 = Utilities.base64Encode(logoBlob.getBytes());
+    const logoDataUrl = 'data:' + logoBlob.getContentType() + ';base64,' + logoBase64;
+    htmlTemplate = htmlTemplate.replace(/\{\{IMAGE_SRC\}\}/g, logoDataUrl);
+
+  // Get the CSV file - handle CSV files, Excel files, and Google Sheets
   updateProgressStatus(ss, 'Loading data file...');
     const file = DriveApp.getFileById(csvFileId);
     const mimeType = file.getMimeType();
@@ -219,6 +227,7 @@ function generateBrandReports() {
     const required = [
       '*contactname', 'contactname',
       '*invoicenumber', 'invoicenumber',
+      '*invoiceDate',
       'description',
       '*quantity', 'quantity',
       '*unitamount', 'unitamount',
@@ -231,6 +240,7 @@ function generateBrandReports() {
     const basicOk = (headerSet.has('*contactname') || headerSet.has('contactname'))
       && (headerSet.has('*invoicenumber') || headerSet.has('invoicenumber'))
       && headerSet.has('description')
+      && headerSet.has('*invoiceDate')
       && (headerSet.has('*quantity') || headerSet.has('quantity'))
       && (headerSet.has('*unitamount') || headerSet.has('unitamount'))
       && headerSet.has('taxamount');
@@ -255,6 +265,8 @@ function generateBrandReports() {
     rows.forEach(row => {
       const brand = row['*ContactName'] || row[headers[0]] || 'Unknown Brand';
       const invoiceNum = row['*InvoiceNumber'] || row['InvoiceNumber'] || 'Unknown Invoice';
+      const InvoiceDate = row ['*invoiceDate'];
+      
       Logger.log('Processing row with brand: ' + brand + ', invoice: ' + invoiceNum);
       if (!brands[brand]) {
         brands[brand] = {};
@@ -442,7 +454,7 @@ function generateBrandReports() {
       const htmlContent = htmlTemplate
         .replace(/\{\{BRAND\}\}/g, brand)
         .replace(/\{\{CLIENT_NAME\}\}/g, clientName)
-        .replace(/\{\{CURRENT_DATE\}\}/g, currentDate)
+        .replace(/\{\{INVOICE_DATE\}\}/g, invoiceDate)
         .replace(/\{\{INVOICE_NUMBERS\}\}/g, allInvoiceNumbers.join(', '))
         .replace(/\{\{INVOICES_HTML\}\}/g, invoicesHtml);
     
