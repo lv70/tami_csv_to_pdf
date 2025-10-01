@@ -1,0 +1,17 @@
+env.yaml
+env*
+tmp
+__pycache__
+dbsecret* 
+smtpuser*
+smtppass*
+logs*
+*.log
+*.txt
+tmp*
+py-*
+*.tmp
+.env
+.env-good
+docs
+.clasp.json
